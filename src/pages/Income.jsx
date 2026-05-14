@@ -307,12 +307,8 @@ export default function Income() {
                 <Button variant="primary" onClick={() => handleDownloadReceiptPDF(previewRecord)}>Download PDF</Button>
               </div>
             </div>
-            <div className="flex-1 overflow-auto bg-gray-200 print-content" id="receipt-preview-content">
-              <div className="receipt-scroll-container">
-                <div className="receipt-wrapper">
-                  <Receipt record={previewRecord} />
-                </div>
-              </div>
+            <div className="flex-1 overflow-auto p-8 flex justify-center bg-gray-200 print-content" id="receipt-preview-content">
+              <Receipt record={previewRecord} />
             </div>
           </div>
         </div>

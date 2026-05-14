@@ -4,7 +4,7 @@ import { formatINR, formatDate } from '../utils/formatters';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Table from '../components/ui/Table';
-import { format } from 'date-fns';
+import { format, subMonths } from 'date-fns';
 import { TrendingUp, TrendingDown, Scale, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmptyState from '../components/ui/EmptyState';
@@ -20,7 +20,7 @@ export default function Dashboard() {
     netBalance: overallNetBalance 
   } = useTransactions();
   
-  const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
+  const [selectedMonth, setSelectedMonth] = useState(format(subMonths(new Date(), 1), 'yyyy-MM'));
   const [viewMode, setViewMode] = useState('monthly'); // 'monthly' | 'overall'
 
   // Filter by selected month for the monthly view
@@ -65,8 +65,8 @@ export default function Dashboard() {
   const displayNetBalance = viewMode === 'monthly' ? monthlyNetBalance : overallNetBalance;
 
   const recentTransactions = useMemo(() => 
-    allTransactions.slice(0, 10)
-  , [allTransactions]);
+    filteredTransactions.slice(0, 10)
+  , [filteredTransactions]);
 
   const columns = [
     { key: 'date', label: 'Date', render: (r) => formatDate(r.date) },
@@ -108,59 +108,106 @@ export default function Dashboard() {
           )}
         </div>
         
-        <div className="flex bg-white p-1 rounded-lg border border-border shadow-sm">
-          <button 
-            onClick={() => setViewMode('monthly')}
-            className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'monthly' ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
-          >
-            Monthly
-          </button>
-          <button 
-            onClick={() => setViewMode('overall')}
-            className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'overall' ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
-          >
-            Overall
-          </button>
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+          {/* Mobile toggle */}
+          <div className="flex md:!hidden bg-white p-1 rounded-lg border border-border shadow-sm">
+            <button 
+              onClick={() => setViewMode('monthly')}
+              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'monthly' ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
+            >
+              Monthly
+            </button>
+            <button 
+              onClick={() => setViewMode('overall')}
+              className={`px-4 py-1.5 text-xs font-bold rounded-md transition-all ${viewMode === 'overall' ? 'bg-primary text-white shadow-sm' : 'text-muted hover:text-text'}`}
+            >
+              Overall
+            </button>
+          </div>
+
+          {/* Desktop Month Picker */}
+          <div className="hidden md:block">
+             <input 
+              type="month" 
+              value={selectedMonth}
+              onChange={(e) => {
+                setSelectedMonth(e.target.value);
+                setViewMode('monthly');
+              }}
+              className="border border-border bg-white rounded-md px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-text"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* Mobile Layout (hidden on md and up) */}
+      <div className="md:!hidden space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <Card 
+            label="INCOME" 
+            value={formatINR(displayIncome)} 
+            accent="green" 
+            icon={TrendingUp} 
+            className="text-center p-3"
+          />
+          <Card 
+            label="EXPENSE" 
+            value={formatINR(displayExpense)} 
+            accent="red" 
+            icon={TrendingDown} 
+            className="text-center p-3"
+          />
+        </div>
+
+        <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden h-44 flex flex-col justify-end">
+          <div className="absolute top-4 right-4 opacity-10">
+            <Scale size={120} strokeWidth={1} />
+          </div>
+          <p className="text-sm font-bold opacity-80 uppercase tracking-widest mb-1">Net Balance</p>
+          <h3 className="text-4xl font-black tracking-tight">{formatINR(displayNetBalance)}</h3>
+        </div>
+
+        {displayUnpaid > 0 && (
+          <Card 
+            label="PENDING / UNPAID" 
+            value={formatINR(displayUnpaid)} 
+            accent="amber" 
+            icon={TrendingDown} 
+            className="bg-amber-50/50"
+          />
+        )}
+      </div>
+
+      {/* Desktop Layout (hidden on mobile, visible on md and up) */}
+      <div className="hidden md:grid md:grid-cols-4 gap-4">
         <Card 
-          label="INCOME" 
+          label="Total Income (Varav)" 
           value={formatINR(displayIncome)} 
           accent="green" 
           icon={TrendingUp} 
-          className="text-center p-3"
         />
         <Card 
-          label="EXPENSE" 
+          label="Paid Expense (Chilav)" 
           value={formatINR(displayExpense)} 
           accent="red" 
           icon={TrendingDown} 
-          className="text-center p-3"
         />
-      </div>
-
-      <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden h-44 flex flex-col justify-end">
-        <div className="absolute top-4 right-4 opacity-10">
-          <Scale size={120} strokeWidth={1} />
-        </div>
-        <p className="text-sm font-bold opacity-80 uppercase tracking-widest mb-1">Net Balance</p>
-        <h3 className="text-4xl font-black tracking-tight">{formatINR(displayNetBalance)}</h3>
-      </div>
-
-      {displayUnpaid > 0 && (
         <Card 
-          label="PENDING / UNPAID" 
+          label="Pending / Unpaid" 
           value={formatINR(displayUnpaid)} 
-          accent="amber" 
+          accent="blue" 
           icon={TrendingDown} 
-          className="bg-amber-50/50"
         />
-      )}
+        <Card 
+          label="Net Balance (Shishtam)" 
+          value={formatINR(displayNetBalance)} 
+          accent="blue" 
+          icon={Scale} 
+        />
+      </div>
 
       {viewMode === 'monthly' && (
-        <div className="bg-primary-light/50 p-4 rounded-lg border border-primary-light flex items-center justify-between">
+        <div className="md:!hidden bg-primary-light/50 p-4 rounded-lg border border-primary-light flex items-center justify-between">
           <p className="text-sm font-medium text-primary-dark">
             Showing data for: <span className="font-bold">{format(new Date(selectedMonth + '-01'), 'MMMM yyyy')}</span>
           </p>

@@ -42,27 +42,27 @@ export default function Receipt({ record }) {
       <div className="ml-10 md:ml-12 p-4 md:p-6 pb-2 h-full flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-start mb-2">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center border-2 border-teal-600 overflow-hidden p-1">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center border-2 border-teal-600 overflow-hidden p-0.5">
                <img src="./image/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <h2 className="text-2xl md:text-3xl font-black text-teal-800 tracking-tighter leading-none mb-1 uppercase">
+              <h2 className="text-xl md:text-2xl font-black text-teal-800 tracking-tighter leading-none mb-0.5 uppercase">
                 MAKHDOOMIYYA ACADEMY, ATTINGAL
               </h2>
-              <p className="text-[10px] md:text-xs font-bold text-gray-600 uppercase tracking-widest">
+              <p className="text-[8px] md:text-[10px] font-bold text-gray-600 uppercase tracking-wider">
                 UNDER QUADISIYYA ISLAMIC COMPLEX, THAZHUTHALA, KOLLAM
               </p>
             </div>
           </div>
-          <div className="text-right">
-            <div className="flex flex-col items-end">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Receipt No.</span>
-              <span className="text-2xl font-black text-red-600 font-mono">{record.manualReceiptNo || record.digitalReceiptNo}</span>
+          <div className="text-right space-y-1 shrink-0">
+            <div className="flex items-center gap-2 justify-end">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">NO:</span>
+              <span className="text-xl font-black text-slate-800 font-mono">{record.manualReceiptNo || record.digitalReceiptNo}</span>
             </div>
-            <div className="mt-4 flex flex-col items-end">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Date</span>
-              <span className="text-lg font-bold text-gray-800 border-b-2 border-dotted border-gray-300 min-w-[100px] text-center">
+            <div className="flex items-center gap-2 justify-end mt-1">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">DATE:</span>
+              <span className="text-md font-bold text-gray-800 border-b border-gray-300 min-w-[90px] text-center pb-0.5">
                 {formatDate(record.date)}
               </span>
             </div>
@@ -106,20 +106,16 @@ export default function Receipt({ record }) {
         {/* Footer */}
         <div className="mt-4 flex justify-between items-end">
           <div className="relative">
-            <div style={{
-              background: '#f0fdfa',
-              border: '2px solid #0d9488',
-              borderRadius: '8px',
-              padding: '6px 32px 28px 32px',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '8px',
-              minHeight: '80px',
-            }}>
-              <span style={{ fontSize: '1.875rem', fontWeight: 900, color: '#134e4a', lineHeight: 1 }}>₹</span>
-              <span style={{ fontSize: '1.875rem', fontWeight: 900, color: '#134e4a', fontFamily: 'monospace', textDecoration: 'underline double', lineHeight: 1 }}>
-                {formatINR(record.amount).replace('₹', '').trim()}/-
-              </span>
+            <div className="flex flex-col border-2 border-teal-700 rounded-md overflow-hidden bg-white" style={{ minWidth: '220px' }}>
+              <div className="bg-teal-700 text-teal-50 text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-1.5 text-center flex items-center justify-center gap-2">
+                Amount Received
+              </div>
+              <div className="px-6 py-3 flex items-center justify-center gap-1 bg-gradient-to-b from-teal-50/50 to-teal-100/50">
+                <span className="text-2xl font-black text-teal-800 opacity-80 mt-1">₹</span>
+                <span className="text-3xl font-black text-teal-900 font-mono tracking-tight">
+                  {formatINR(record.amount).replace('₹', '').trim()}/-
+                </span>
+              </div>
             </div>
           </div>
 

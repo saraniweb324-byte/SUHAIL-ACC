@@ -193,7 +193,7 @@ export default function Reports() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 no-print">
         <Card label="Filtered Income" value={formatINR(totalIncomeValue)} accent="green" />
         <Card label="Filtered Expense" value={formatINR(totalExpenseValue)} accent="red" />
-        <Card label="Filtered Net Balance" value={formatINR(Math.abs(netBalanceValue))} accent={netBalanceValue >= 0 ? 'blue' : 'red'} />
+        <Card label="Filtered Net Balance" value={formatINR(netBalanceValue)} accent={netBalanceValue >= 0 ? 'blue' : 'red'} />
       </div>
 
       <div className="bg-white rounded-lg border border-border shadow-sm overflow-hidden flex flex-col pt-4">
